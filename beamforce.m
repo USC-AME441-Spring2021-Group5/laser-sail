@@ -61,7 +61,7 @@ for j = 1:length(Y)
 %         quiver(X(j), Y(j), Fnow(1), Fnow(2), 1e3, 'b')
    end
 end
-% F = F/pi/((2*R)^2);
+F = F/pi/((2*R)^2);
 
 
 end
