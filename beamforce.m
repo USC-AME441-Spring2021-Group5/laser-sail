@@ -8,7 +8,7 @@ function F = beamforce(R,P,PROFILE,X,Y)
 c = 3e8; % speed of light [m/s]
 
 N = length(X);
-dy = 2*R/N;
+% dy = 2*R/N;
 std = R/sqrt(2*log(2));
 switch PROFILE
     case 'uniform'
@@ -16,7 +16,7 @@ switch PROFILE
     case 'gaussian'
         profile = normpdf(Y,0,std);
         % Maybe ask on piazza about how to determine half beam width from std?
-    case 'multiple gaussian'
+    case 'multi-mode gaussian'
         profile = normpdf(Y,.5*R,std) + normpdf(Y,-.5*R,std);
 end
 
@@ -34,7 +34,7 @@ for j = 1:length(Y)
     % Calling normal vector for the point of interest
     nHat = [dyVec(j) -dxVec(j)]/norm([dyVec(j) -dxVec(j)]);
     % Calculating force due to the ray of interest
-    Fnow = 2*PVec(j)*dot(bHat,nHat)*nHat*dy/c;
+    Fnow = 2*PVec(j)*dot(bHat,nHat)*nHat*abs(dyVec(j))/c;
     % Adding this ray's force to the total force
     F = F + Fnow;
     
@@ -61,7 +61,7 @@ for j = 1:length(Y)
 %         quiver(X(j), Y(j), Fnow(1), Fnow(2), 1e3, 'b')
    end
 end
-F = F/pi/((2*R)^2);
+% F = F/pi/((2*R)^2);
 
 
 end
