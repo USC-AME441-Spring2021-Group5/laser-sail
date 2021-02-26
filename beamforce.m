@@ -39,9 +39,16 @@ for j = 1:length(Y)
     F = F + Fnow;
     
     %{
+    May need to split the force calculatiosn up to the different cases as
+    the integrals may be different... (see newport optics refs)
+    %}
+    
+    %{
     THE FORCE EQUATION COULD BE WRONG...
     IT DOESN'T HAVE CONSISTENT UNITS!!!
+    ...Yes it does... P is Power FLUX, not just Power.
     CORRECT UNITS WOULD NEED DIVISION BY SOME AREA.
+    --> The power needs divsion by an area
     FROM ONLINE RESOURCES, THE FORCE WOULD BE AS FOLLOWS:
     FOR A PERFECT REFLECTOR
     F = 2*u;
