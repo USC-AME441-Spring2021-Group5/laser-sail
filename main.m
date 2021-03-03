@@ -14,7 +14,7 @@ center = [0 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail [m/s]
 P = 30;                 % Power of laser beam [W]
 N = 501;                % Number of rays
-profile = 'multi-mode gaussian';   % Type of beam profile 
+profile = 'uniform';   % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
 
 myPlt = figure(1);      % Creating a figure to plot sail anf beam

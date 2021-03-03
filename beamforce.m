@@ -12,7 +12,7 @@ N = length(X);
 std = R/sqrt(2*log(2));
 switch PROFILE
     case 'uniform'
-        profile = ones(1,N)./N; % creating a uniform distribution for the laser profile
+        profile = ones(1,N)./N./(2*R); % creating a uniform distribution for the laser profile
     case 'gaussian'
         profile = normpdf(Y,0,std);
         % Maybe ask on piazza about how to determine half beam width from std?
@@ -68,7 +68,7 @@ for j = 1:length(Y)
 %         quiver(X(j), Y(j), Fnow(1), Fnow(2), 1e3, 'b')
    end
 end
-F = F/pi/((2*R)^2);
+% F = F/pi/((2*R)^2);
 
 
 end
