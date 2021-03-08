@@ -12,7 +12,7 @@ N = length(X);
 std = R/sqrt(2*log(2));
 switch PROFILE
     case 'uniform'
-        profile = ones(1,N)./N./(2*R); % creating a uniform distribution for the laser profile
+        profile = ones(1,N)./N;%./(2*R); % creating a uniform distribution for the laser profile
     case 'gaussian'
         profile = normpdf(Y,0,std);
         % Maybe ask on piazza about how to determine half beam width from std?
@@ -26,17 +26,22 @@ PVec = P*profile; % Assigning the power for each individual ray
 bHat = [1 0]; % b^ vector. Ie, direction of beam propagation
 
 % Finding the normal vector for every point on the sail
-dxVec = gradient(X); dyVec = gradient(Y);
+% dxVec = gradient(X); dyVec = gradient(Y);
    
-F = 0;
+Fvec = zeros(2,N);
+nHatVec = Fvec;
 % For loop used to calculate the force due to the beam
-for j = 1:length(Y)
+for j = 1:length(Y)-1
     % Calling normal vector for the point of interest
-    nHat = [dyVec(j) -dxVec(j)]/norm([dyVec(j) -dxVec(j)]);
+%     nHat = [dyVec(j) -dxVec(j)]/norm([dyVec(j) -dxVec(j)]);
+    nHat = [(Y(j)-Y(j+1)) (X(j+1)-X(j))]/...
+        norm([(Y(j)-Y(j+1)) (X(j+1)-X(j))]);
+    nHatVec(1,j) = nHat(1); nHatVec(2,j) = nHat(2);
     % Calculating force due to the ray of interest
-    Fnow = 2*PVec(j)*dot(bHat,nHat)*nHat*abs(dyVec(j))/c;
+    Fvec(1,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(1)/c; %*abs(dyVec(j))/c;
+    Fvec(2,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(2)/c;
     % Adding this ray's force to the total force
-    F = F + Fnow;
+%     F = F + Fnow;
     
     %{
     May need to split the force calculatiosn up to the different cases as
@@ -61,14 +66,16 @@ for j = 1:length(Y)
     % vectors
 %     figure(1); 
     hold on
-    if mod(j,100) == 1 
-        ray = [-2*R X(j); Y(j) Y(j)];
+    if mod(j,100) == 50 
+        poi = [(.5*(X(j)+X(j+1))) (.5*(Y(j)+Y(j+1)))];
+        ray = [-2*R poi(1); poi(2) poi(2)];
         plot(ray(1,:), ray(2,:), 'r')
-%         quiver(X(j), Y(j), nHat(1), nHat(2), .25, 'm')
-%         quiver(X(j), Y(j), Fnow(1), Fnow(2), 1e3, 'b')
+%         quiver(poi(1), poi(2), nHat(1), nHat(2), .25, 'm')
+        quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 50e3, 'b')
    end
 end
 % F = F/pi/((2*R)^2);
+F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
 
 
 end

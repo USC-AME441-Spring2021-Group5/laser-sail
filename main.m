@@ -9,11 +9,11 @@ clear; clc; close all;
 %% Setting up inital paramters and known constants
 
 m = 1;                  % Mass of the sail [kg]
-R = 1;                  % Radius of sail [m]
+R = .1;                  % Radius of sail [m]
 center = [0 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail [m/s]
 P = 30;                 % Power of laser beam [W]
-N = 501;                % Number of rays
+N = 1001;                % Number of rays
 profile = 'uniform';   % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
 
@@ -21,20 +21,21 @@ myPlt = figure(1);      % Creating a figure to plot sail anf beam
 t = 0;                  % initiating time
 
 %% While loop used to update sail posisiton over time
-while t <= 3.15e7 % letting code run for a "year"
+while t <= 3.15e7 % letting code run for a "year". May change to a few weeks
 
     % Calculating x and y points on the sail for plotting and force
     % calulations
-    th = linspace(.5*pi,1.5*pi,N);
-    yVec = R*sin(th) + center(2); %linspace(-R,R,N); Ignore these, just ideas
-    xVec = R*cos(th) + center(1); %center(1) - sqrt( R^2 - (yVec - center(2)).^2 );
-    xVec2 = R*cos(th+pi) + center(1); %center(1) + sqrt( R^2 - (yVec - center(2)).^2 );
+%     th = linspace(.5*pi,1.5*pi,N);
+    yVec = linspace(-R,R,N); % R*sin(th) + center(2); Ignore these, just ideas
+    xVec = center(1) - sqrt( R^2 - (yVec - center(2)).^2 ); % R*cos(th) + center(1);
+    xVec2 = center(1) + sqrt( R^2 - (yVec - center(2)).^2 );% R*cos(th+pi) + center(1);
     % xVec2 is a dummy vector used only for plotting since the force is
     % only on the left side of the sail
     
     % Plotting most recent sail position
     myPlt; hold off
-    plot(xVec,yVec,'k', xVec2, yVec, 'k'), axis equal,
+    plot(xVec,yVec,'k')%, xVec2, yVec, 'k'),
+    axis equal
     xlim([center(1)-4*R, center(1)+4*R])
     ylim([center(2)-2*R, center(2)+2*R])    
 
@@ -51,7 +52,7 @@ hairy.
     F = FBeam + FDrag;
   
     % Plotting total force vector at the sails "center of mass"
-    hold on, quiver(center(1), center(2), F(1), F(2), inv(norm(F)),...
+    hold on, quiver(center(1), center(2), F(1), F(2), R*inv(norm(F)),...
         'b', 'LineWidth', 2)
     hold on, plot(center(1),center(2), 'b*', 'LineWidth', 5)
     drawnow
