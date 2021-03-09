@@ -1,4 +1,4 @@
-function F = beamforce(R,P,PROFILE,X,Y)
+function F = beamforce(R,P,PROFILE,X,Y,d)
 %BEAMFORCE(R,P,PROFILE,X,Y) Calculates force on a spherical due to the
 %photon momentum from an incoming laser beam. R is the radius of the
 %spherical sail, P is the total power output of the laser, PROFILE is a
@@ -9,7 +9,9 @@ c = 3e8; % speed of light [m/s]
 
 N = length(X);
 % dy = 2*R/N;
-std = R/sqrt(2*log(2));
+% W = R(sqrt(1 + (lamda*d/pi/R)^2));
+W = R;
+std = W/sqrt(2*log(2));
 switch PROFILE
     case 'uniform'
         profile = ones(1,N)./N;%./(2*R); % creating a uniform distribution for the laser profile
@@ -71,7 +73,7 @@ for j = 1:length(Y)-1
         ray = [-2*R poi(1); poi(2) poi(2)];
         plot(ray(1,:), ray(2,:), 'r')
 %         quiver(poi(1), poi(2), nHat(1), nHat(2), .25, 'm')
-        quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 50e3, 'b')
+%         quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 50e3, 'b')
    end
 end
 % F = F/pi/((2*R)^2);
