@@ -16,6 +16,7 @@ P = 30;                 % Power of laser beam [W]
 N = 501;                % Number of rays
 profile = 'multi-mode gaussian';   % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
+rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
 
 myPlt = figure(1);      % Creating a figure to plot sail anf beam
 t = 0;                  % initiating time
@@ -47,7 +48,7 @@ kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
 %}  
     FBeam = beamforce(R,P,profile,xVec,yVec);
-    FDrag = 0; % dragforce()
+    FDrag = dragforce(rho,v,R);
     F = FBeam + FDrag;
   
     % Plotting total force vector at the sails "center of mass"
