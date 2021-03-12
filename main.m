@@ -8,13 +8,16 @@ clear; clc; close all;
 
 %% Setting up inital paramters and known constants
 
+% rho =               % Atmospheric Density at GEO
 m = 1;                  % Mass of the sail [kg]
 R = .1;                  % Radius of sail [m]
 center = [0 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail [m/s]
 P = 30;                 % Power of laser beam [W]
+lambda = 980e-9;        % Wavelength of laser
 N = 1001;                % Number of rays
-profile = 'uniform';   % Type of beam profile 
+profile = 'multi-mode gaussian';   % Type of beam profile 
+tol = .3*pi/180;        % Pointing accuracy of laser sat (assumed)
 dt = 1;                 % time differential for force calculation [s]
 
 myPlt = figure(1);      % Creating a figure to plot sail anf beam
@@ -26,9 +29,9 @@ while t <= 3.15e7 % letting code run for a "year". May change to a few weeks
     % Calculating x and y points on the sail for plotting and force
     % calulations
 %     th = linspace(.5*pi,1.5*pi,N);
-    yVec = linspace(-R,R,N); % R*sin(th) + center(2); Ignore these, just ideas
+    yVec = linspace(center(2)-R,center(2)+R,N); % R*sin(th) + center(2); Ignore these, just ideas
     xVec = center(1) - sqrt( R^2 - (yVec - center(2)).^2 ); % R*cos(th) + center(1);
-    xVec2 = center(1) + sqrt( R^2 - (yVec - center(2)).^2 );% R*cos(th+pi) + center(1);
+    xVec2 = center(1) + sqrt( R^2 - (yVec - center(2)).^2 ); % R*cos(th+pi) + center(1);
     % xVec2 is a dummy vector used only for plotting since the force is
     % only on the left side of the sail
     
@@ -47,7 +50,7 @@ So we have a seperate scripts that calculate different forces (drag and
 kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
 %}  
-    FBeam = beamforce(R,P,profile,xVec,yVec);
+    FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,norm(center));
     FDrag = 0; % dragforce()
     F = FBeam + FDrag;
   

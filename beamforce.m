@@ -1,25 +1,30 @@
-function F = beamforce(R,P,PROFILE,X,Y,d)
+function F = beamforce(R,P,LAMBDA,PROFILE,TOL,X,Y,d)
 %BEAMFORCE(R,P,PROFILE,X,Y) Calculates force on a spherical due to the
 %photon momentum from an incoming laser beam. R is the radius of the
 %spherical sail, P is the total power output of the laser, PROFILE is a
 %string that idnetifies the laser beam profile
 
-
 c = 3e8; % speed of light [m/s]
 
 N = length(X);
 % dy = 2*R/N;
-% W = R(sqrt(1 + (lamda*d/pi/R)^2));
-W = R;
+
+% Pointing Error = +/- TOL as a length
+PE = d*tan(TOL)*(2*rand(1) - 1); 
+
+W0 = R;
+W = W0*(sqrt(1 + (LAMBDA*d/pi/W0)^2));
+% W = R;
 std = W/sqrt(2*log(2));
+
 switch PROFILE
     case 'uniform'
         profile = ones(1,N)./N;%./(2*R); % creating a uniform distribution for the laser profile
     case 'gaussian'
-        profile = normpdf(Y,0,std);
+        profile = normpdf(Y,PE,std);
         % Maybe ask on piazza about how to determine half beam width from std?
     case 'multi-mode gaussian'
-        profile = normpdf(Y,.5*R,std) + normpdf(Y,-.5*R,std);
+        profile = normpdf(Y,R+PE,std) + normpdf(Y,-R+PE,std);
 end
 
 PVec = P*profile; % Assigning the power for each individual ray
@@ -42,27 +47,7 @@ for j = 1:length(Y)-1
     % Calculating force due to the ray of interest
     Fvec(1,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(1)/c; %*abs(dyVec(j))/c;
     Fvec(2,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(2)/c;
-    % Adding this ray's force to the total force
-%     F = F + Fnow;
     
-    %{
-    May need to split the force calculatiosn up to the different cases as
-    the integrals may be different... (see newport optics refs)
-    %}
-    
-    %{
-    THE FORCE EQUATION COULD BE WRONG...
-    IT DOESN'T HAVE CONSISTENT UNITS!!!
-    ...Yes it does... P is Power FLUX, not just Power.
-    CORRECT UNITS WOULD NEED DIVISION BY SOME AREA.
-    --> The power needs divsion by an area
-    FROM ONLINE RESOURCES, THE FORCE WOULD BE AS FOLLOWS:
-    FOR A PERFECT REFLECTOR
-    F = 2*u;
-    u = INT(I/A);
-    I (FOR A GUASSIAN BEAM) = 2*P*S/(c*PI*W^2)
-    WHERE W IS THE BEAM WIDTH AND S IS THE SURFACE AREA.
-    %}
         
     % Plotting every 100th ray and its respective normal and force
     % vectors
@@ -76,7 +61,6 @@ for j = 1:length(Y)-1
 %         quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 50e3, 'b')
    end
 end
-% F = F/pi/((2*R)^2);
 F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
 
 
