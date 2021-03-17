@@ -6,20 +6,30 @@ Spring 2021
 
 clear; clc; close all;
 
+%% Deciding what perturbations to include
+% 1 for include, 0 for don't
+Drag = 0;
+PointingTol = 0;
+BeamDivergence = 0;
+
 %% Setting up inital paramters and known constants
 
-% rho =               % Atmospheric Density at GEO
 m = 1;                  % Mass of the sail [kg]
-R = .1;                  % Radius of sail [m]
+R = .1;                 % Radius of sail [m]
 center = [0 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail [m/s]
 P = 30;                 % Power of laser beam [W]
 lambda = 980e-9;        % Wavelength of laser
-N = 1001;                % Number of rays
-profile = 'multi-mode gaussian';   % Type of beam profile 
-tol = .3*pi/180;        % Pointing accuracy of laser sat (assumed)
+N = 1001;               % Number of rays
+profile = 'uniform';    % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
+
+if PointingTol == 1     % Pointing accuracy of laser sat (assumed)
+    tol = .3*pi/180;
+else
+    tol = 0;
+end
 
 myPlt = figure(1);      % Creating a figure to plot sail anf beam
 t = 0;                  % initiating time
@@ -52,8 +62,13 @@ kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
 %}  
 
-    FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,norm(center));
-    FDrag = 0; % dragforce(rho,v,R);
+    FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,norm(center), ...
+        BeamDivergence);
+    if Drag == 1
+        FDrag = dragforce(rho,norm(v),R);
+    else
+        FDrag = 0;
+    end
 
     F = FBeam + FDrag;
   

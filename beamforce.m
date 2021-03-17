@@ -1,4 +1,4 @@
-function F = beamforce(R,P,LAMBDA,PROFILE,TOL,X,Y,d)
+function F = beamforce(R,P,LAMBDA,PROFILE,TOL,X,Y,d,DIVERGENCE)
 %BEAMFORCE(R,P,PROFILE,X,Y) Calculates force on a spherical due to the
 %photon momentum from an incoming laser beam. R is the radius of the
 %spherical sail, P is the total power output of the laser, PROFILE is a
@@ -12,9 +12,13 @@ N = length(X);
 % Pointing Error = +/- TOL as a length
 PE = d*tan(TOL)*(2*rand(1) - 1); 
 
-W0 = R;
-W = W0*(sqrt(1 + (LAMBDA*d/pi/W0)^2));
-% W = R;
+% Calculating beam width due at distance d due to beam divergence
+if DIVERGENCE == 1
+    W0 = R;
+    W = W0*(sqrt(1 + (LAMBDA*d/pi/W0)^2));
+else
+    W = R;
+end
 std = W/sqrt(2*log(2));
 
 switch PROFILE
