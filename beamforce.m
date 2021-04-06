@@ -35,12 +35,7 @@ switch PROFILE
         % Eq From NewpsOps: Power contained within radius R
         temp1 = 1 - exp(-2.*(tempY.^2)./(W.^2));
         temp2 = temp1 - [0 temp1(1:end-1)];
-        profile = [temp2 temp2(end:-1:1)];
-        %{
-        Note that this will sum to 2x the originial guassian as
-        the assumption is that we will be using two lasers to create the
-        profile.
-        %}
+        profile = [temp2 temp2(end:-1:1)]./2;
 
 %{
 Newport Optics gives an equation for power enclosed within a given radius.
