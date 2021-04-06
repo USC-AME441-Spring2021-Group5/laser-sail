@@ -14,7 +14,7 @@ stmnt = 0;
 %% Deciding what perturbations to include
 % 1 for include, 0 for don't
 Drag = 0;
-PointingTol = 1;
+PointingTol = 0;
 BeamDivergence = 0;
 
 %% Setting up inital paramters and known constants
@@ -25,7 +25,10 @@ center = [0 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail rel to beam sat [m/s]
 P = 30;                 % Power of laser beam [W]
 lambda = 980e-9;        % Wavelength of laser
-N = 1001;               % Number of rays
+N = 1000;               % Number of rays --> KEEP EVEN
+if mod(N,2) ~= 0
+    error('N must be even to create power distribution.')
+end
 profile = 'multi-mode gaussian';    % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
@@ -72,7 +75,7 @@ kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
 %}  
 
-    FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,norm(center), ...
+    FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,center(1), ...
         BeamDivergence, plt);
     if Drag == 1
         FDrag = dragforce(rho,norm(v),R);
