@@ -142,6 +142,11 @@ if velocity_plot == 1
     plot(center(1),v(1),'.')
     xlabel('Distance (m)') 
     ylabel('Velocity (m/s)') 
+    dim = [.15 .6 .3 .3];
+    str = {'0 = off 1 = on',sprintf('Drag = %.0f',Drag),sprintf('SRP = %.0f'...
+        ,SRP),sprintf('PointingTol = %.0f',PointingTol),sprintf(...
+        'BeamDivergence = %.0f',BeamDivergence)};
+    annotation('textbox',dim,'String',str,'FitBoxToText','on');
     drawnow
 end
 
@@ -151,6 +156,11 @@ if force_plot == 1
     plot(center(1),F(1),'.')
     xlabel('Distance (m)') 
     ylabel('Force (N)') 
+    dim = [.15 .6 .3 .3];
+    str = {'0 = off 1 = on',sprintf('Drag = %.0f',Drag),sprintf('SRP = %.0f'...
+        ,SRP),sprintf('PointingTol = %.0f',PointingTol),sprintf(...
+        'BeamDivergence = %.0f',BeamDivergence)};
+    annotation('textbox',dim,'String',str,'FitBoxToText','on');
     drawnow
 end
 
@@ -165,6 +175,11 @@ if yOffset_plot == 1
 %     yyaxis right
 %     plot(center(1),t/60,'.')
 %     ylabel('Time (min)')
+    dim = [.15 .6 .3 .3];
+    str = {'0 = off 1 = on',sprintf('Drag = %.0f',Drag),sprintf('SRP = %.0f'...
+        ,SRP),sprintf('PointingTol = %.0f',PointingTol),sprintf(...
+        'BeamDivergence = %.0f',BeamDivergence)};
+    annotation('textbox',dim,'String',str,'FitBoxToText','on');
     drawnow
 end
 
