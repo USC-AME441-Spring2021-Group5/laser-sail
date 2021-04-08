@@ -94,7 +94,7 @@ hairy.
     if SRP == 1
         F_SRP = SRPforce(R,theta,q);
     else
-        FDrag = 0;
+        F_SRP = 0;
     end
     
     F = FBeam + FDrag + F_SRP;
