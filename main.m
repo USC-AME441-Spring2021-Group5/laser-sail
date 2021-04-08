@@ -18,7 +18,7 @@ stmnt = 0;
 %% Deciding what perturbations to include
 % 1 for include, 0 for don't
 Drag = 0;
-F_SRP = 1;
+SRP = 1;
 PointingTol = 0;
 BeamDivergence = 0;
 
@@ -91,7 +91,7 @@ hairy.
         FDrag = 0;
     end
     
-    if F_SRP == 1
+    if SRP == 1
         F_SRP = SRPforce(R,theta,q);
     else
         FDrag = 0;
@@ -137,7 +137,7 @@ hairy.
     t = t + dt; % Updating time so the while loop ends at some point.
    
 if velocity_plot == 1
-    figure(1)
+    figure(2)
     hold on
     plot(center(1),v(1),'.')
     xlabel('Distance (m)') 
@@ -146,7 +146,7 @@ if velocity_plot == 1
 end
 
 if force_plot == 1
-    figure(2)
+    figure(3)
     hold on
     plot(center(1),F(1),'.')
     xlabel('Distance (m)') 
@@ -155,7 +155,7 @@ if force_plot == 1
 end
 
 if yOffset_plot == 1
-    figure(3)
+    figure(4)
     hold on
 %     yyaxis left
     plot(center(1),center(2),'.')
