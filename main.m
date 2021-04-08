@@ -8,12 +8,17 @@ clear; clc; close all;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Create "Real-Time" Plots? 1 == Yes, 0 == No
 plt = 0;
+force_plot = 0;
+velocity_plot = 0;
+yOffset_plot = 1;
+
 %% Create "Real-Time" Print Statements? 1 == Yes, 0 == No
 stmnt = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Deciding what perturbations to include
 % 1 for include, 0 for don't
 Drag = 0;
+F_SRP = 1;
 PointingTol = 0;
 BeamDivergence = 0;
 
@@ -32,6 +37,8 @@ end
 profile = 'multi-mode gaussian';    % Type of beam profile 
 dt = 1;                 % time differential for force calculation [s]
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
+theta = 0;              %angle of incidence of the sun [deg]
+q = 0.8;                %unitless reflectacne factor. 0 to 1 (1 is perfect reflectance)
 
 if PointingTol == 1     % Pointing accuracy of laser sat (assumed)
     tol = .2*pi/180;    % Taken from ITU-R
@@ -77,12 +84,20 @@ hairy.
 
     FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,center(1), ...
         BeamDivergence, plt);
+    
     if Drag == 1
         FDrag = dragforce(rho,norm(v),R);
     else
         FDrag = 0;
     end
-    F = FBeam + FDrag;
+    
+    if F_SRP == 1
+        F_SRP = SRPforce(R,theta,q);
+    else
+        FDrag = 0;
+    end
+    
+    F = FBeam + FDrag + F_SRP;
     
     if plt == 1
         % Plotting total force vector at the sails "center of mass"
@@ -119,7 +134,38 @@ hairy.
         floor( (t-(floor(t/3600)*3600)-(floor((t-(floor(t/3600)*3600))/60)*60))))
         break
     end
-    
-%     pause()
     t = t + dt; % Updating time so the while loop ends at some point.
+   
+if velocity_plot == 1
+    figure(1)
+    hold on
+    plot(center(1),v(1),'.')
+    xlabel('Distance (m)') 
+    ylabel('Velocity (m/s)') 
+    drawnow
+end
+
+if force_plot == 1
+    figure(2)
+    hold on
+    plot(center(1),F(1),'.')
+    xlabel('Distance (m)') 
+    ylabel('Force (N)') 
+    drawnow
+end
+
+if yOffset_plot == 1
+    figure(3)
+    hold on
+%     yyaxis left
+    plot(center(1),center(2),'.')
+    xlabel('Distance (m)') 
+    ylabel('Offset (m)') 
+    
+%     yyaxis right
+%     plot(center(1),t/60,'.')
+%     ylabel('Time (min)')
+    drawnow
+end
+
 end
