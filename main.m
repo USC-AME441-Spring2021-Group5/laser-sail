@@ -134,6 +134,13 @@ hairy.
         floor( (t-(floor(t/3600)*3600)-(floor((t-(floor(t/3600)*3600))/60)*60))))
         break
     end
+    
+    if ~isreal(F(1)) == 1 || ~isreal(F(2)) == 1
+        fprintf('\nForce Vectory is imaginary.\n')
+        fprintf('Imaginary at %0.4fm from source\n',center(1))
+        break
+    end   
+    
     t = t + dt; % Updating time so the while loop ends at some point.
    
 if velocity_plot == 1
