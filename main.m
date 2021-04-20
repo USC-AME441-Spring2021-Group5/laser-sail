@@ -62,8 +62,8 @@ while t <= tTotal % letting code run for a "year". May change to a few weeks
         
     yVec = linspace(center(2)-R,center(2)+R,N);
 
-    xVec = center(1) - (((sqrt( R^2 - (yVec - center(2)).^2 )).^4).^(1/4)); %center(1) - R.*cos(thetaVec);
-    xVec2 = center(1) + (((sqrt( R^2 - (yVec - center(2)).^2 )).^4).^(1/4)); %center(1) + R.*cos(thetaVec);
+    xVec = center(1) - sqrt( R^2 - (yVec - center(2)).^2 ); %center(1) - R.*cos(thetaVec);
+    xVec2 = center(1) + sqrt( R^2 - (yVec - center(2)).^2 ); %center(1) + R.*cos(thetaVec);
     % xVec2 is a dummy vector used only for plotting since the force is
     % only on the left side of the sail
     if ~isreal(yVec)
