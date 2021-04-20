@@ -62,10 +62,13 @@ only 86.5% of the beam's power is incident on the sail. Therefore, PVec
 will only sum to .865*P.
 %}
 PVec = P*profile; % Assigning the power for each individual ray
+if ~isreal(PVec)
+    fprintf('PVec is imaginary!\n')
+end
 
 bHat = [1 0]; % b^ vector. Ie, direction of beam propagation
    
-Fvec = zeros(2,N);
+Fvec = zeros(2,N-1);
 nHatVec = Fvec;
 % For loop used to calculate the force due to the beam
 for j = 1:length(Y)-1
@@ -73,9 +76,10 @@ for j = 1:length(Y)-1
     nHat = [(Y(j)-Y(j+1)) (X(j+1)-X(j))]/...
         norm([(Y(j)-Y(j+1)) (X(j+1)-X(j))]);
     nHatVec(1,j) = nHat(1); nHatVec(2,j) = nHat(2);
+
     % Calculating force due to the ray of interest
-    Fvec(1,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(1)/c;
-    Fvec(2,j) = 2*PVec(j)*dot(bHat,nHat)*nHat(2)/c;
+    Fvec(1,j) = 2*(.5*(PVec(j)+PVec(j+1)))*dot(bHat,nHat)*nHat(1)/c;
+    Fvec(2,j) = 2*(.5*(PVec(j)+PVec(j+1)))*dot(bHat,nHat)*nHat(2)/c;
          
     if PLT == 1
     % Plotting every 100th ray and its respective normal and force
@@ -85,10 +89,14 @@ for j = 1:length(Y)-1
         poi = [(.5*(X(j)+X(j+1))) (.5*(Y(j)+Y(j+1)))];
         ray = [-2*R poi(1); poi(2) poi(2)];
         plot(ray(1,:), ray(2,:), 'r')
-%         quiver(poi(1), poi(2), nHat(1), nHat(2), .25, 'm')
-%         quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 50e3, 'b')
+        quiver(poi(1), poi(2), nHat(1), nHat(2), .1, 'm')
+        quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 1e6, 'b')
     end
-   end
+    end
+%    fprintf('\nray %i:\n%.16f\t%.16f\n%.16f\t%.16f\n', j, nHat(1), nHat(2),...
+%        Fvec(1,j), Fvec(2,j))
+end
+F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
 end
 F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
 end
