@@ -98,5 +98,4 @@ for j = 1:length(Y)-1
 end
 F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
 end
-F = [sum(Fvec(1,:)) sum(Fvec(2,:))];
-end
+
