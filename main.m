@@ -8,7 +8,8 @@ clear; clc; close all;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Create "Real-Time" Plots? 1 == Yes, 0 == No
 plt = 0;
-PLTs = 1;
+PLTs = 0;
+
 %% Create "Real-Time" Print Statements? 1 == Yes, 0 == No
 stmnt = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,13 +17,14 @@ stmnt = 0;
 % 1 for include, 0 for don't
 Drag = 0;
 PointingTol = 0;
-BeamDivergence = 1;
+BeamDivergence = 0;
+SRP = 1;
 
 %% Setting up inital paramters and known constants
 
 m = 1;                  % Mass of the sail [kg]
 R = .1;                 % Radius of sail [m]
-center = [0 0];         % Initial position of sail center
+center = [160e3 0];         % Initial position of sail center
 v = [0 0];              % Initial velocity of sail rel to beam sat [m/s]
 P = 30;                 % Power of laser beam [W]
 lambda = 980e-9;        % Wavelength of laser
@@ -31,9 +33,12 @@ if mod(N,2) ~= 0
     error('N must be even to create power distribution.')
 end
 profile = 'multi-mode gaussian';    % Type of beam profile 
-dt = 3600;                 % time differential for force calculation [s]
-tTotal = 2*7*24*3600;      % total time to run the experiment
+dt = 60;                 % time differential for force calculation [s]
+tTotal = 17*24*3600;      % total time to run the experiment
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
+theta = 90;              % initial incident angle of sun wrt to laser
+q = 1;                  % refelctance of sphere surface (1 is perfect reflection)
+
 if PointingTol == 0     % Pointing accuracy of laser sat (assumed)
     tol = .2*pi/180;    % Taken from ITU-R
 else
@@ -93,14 +98,28 @@ kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
 %}  
 
+    % calculate the angle of SRP incidence wrt the sail position and laser
+    % vector
+    T = 86164;      % GEO orbital period [s]
+    rate = 360/T;   % degrees per second
+    theta_prime = theta + rate*t; % new incident angle of sun wrt to laser
+
     FBeam = beamforce(R,P,lambda,profile,tol,xVec,yVec,center(1), ...
         BeamDivergence, plt);
+    
     if Drag == 1
         FDrag = dragforce(rho,norm(v),R);
     else
         FDrag = 0;
     end
-    F = FBeam + FDrag;
+    
+    if SRP == 1
+        F_SRP = SRPforce(R,N,theta_prime,q);
+    else
+        F_SRP = 0;
+     end
+    
+    F = FBeam + FDrag + F_SRP;
     
     if ~isreal(F)
         fprintf('F isimaginary!\n')
@@ -154,7 +173,6 @@ hairy.
 %     pause()
     t = t + dt; % Updating time so the while loop ends at some point.
     counter = counter + 1; % Updating interation number
-end
 
 if PLTs == 1
     figure, plot(tVec,disVec)
@@ -167,4 +185,5 @@ if PLTs == 1
     xlabel('Distance [m]'), ylabel('Force [N]')
     figure, plot(tVec, offsetVec)
     xlabel('Time [s]'), ylabel('Sail Offset from Beam Axis [m]')
+end
 end
