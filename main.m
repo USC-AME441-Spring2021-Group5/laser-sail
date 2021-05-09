@@ -41,7 +41,7 @@ profile = 'multi-mode gaussian';    % Type of beam profile
 dt = 3600;                 % time differential for force calculation [s]
 tTotal = (16*24 + 10)*3600;      % total time to run the experiment
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
-theta = 0;              % initial incident angle of sun wrt to laser
+phi = 0;              % initial incident angle of sun wrt to laser
 q = 0.4;                % refelctance of sphere surface (1 is perfect reflection)
 if PointingTol == 1     % Pointing accuracy of laser sat (assumed)
     tol = .2*pi/180;    % Taken from ITU-R
@@ -108,7 +108,7 @@ hairy.
     % vector
     T = 86164;      % GEO orbital period [s]
     rate = 360/T;   % degrees per second
-    theta_prime = theta + rate*t; % new incident angle of sun wrt to laser
+    phi_prime = phi + rate*t; % new incident angle of sun wrt to laser
 
     [FBeam,tau] = beamforce(R,P,lambda,profile,tol,xVec,yVec,...
         center(1), BeamDivergence, plt, COM);
@@ -119,7 +119,7 @@ hairy.
     end
     
     if SRP == 1
-        F_SRP = SRPforce(R,N,theta_prime,q);
+        F_SRP = SRPforce(R,N,phi_prime,q);
     else
         F_SRP = 0;
     end
