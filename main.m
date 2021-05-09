@@ -42,7 +42,7 @@ dt = 3600;                 % time differential for force calculation [s]
 tTotal = (16*24 + 10)*3600;      % total time to run the experiment
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
 theta = 0;              % initial incident angle of sun wrt to laser
-q = 1;                  % refelctance of sphere surface (1 is perfect reflection)
+q = 0.4;                % refelctance of sphere surface (1 is perfect reflection)
 if PointingTol == 1     % Pointing accuracy of laser sat (assumed)
     tol = .2*pi/180;    % Taken from ITU-R
 else
