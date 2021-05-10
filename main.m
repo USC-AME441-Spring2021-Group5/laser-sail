@@ -21,7 +21,7 @@ BeamDivergence = 0;
 SurfaceRoughness = 0;
 SRP = 0;
 % Define the offset in [x y]
-CenterOfMassOffset = [-1e-3 -1e-3];
+CenterOfMassOffset = [0 0];
 
 %% Setting up inital paramters and known constants
 
@@ -61,6 +61,9 @@ if PLTs == 1
     tVec = disVec;
     Fvec = tVec;
     offsetVec = Fvec;
+    tauVec = Fvec;
+    alphVec = Fvec;
+    angVec = Fvec;
 end
 
 COM = center + CenterOfMassOffset;
@@ -170,6 +173,9 @@ hairy.
         tVec(counter) = t;
         Fvec(counter) = norm(F);
         offsetVec(counter) = center(2);
+        tauVec(counter) = norm(tau);
+        alphVec(counter) = alpha;
+        angVec(counter) = omega;
     end
         
     % A bunch of print statements just to see what is going on
@@ -220,4 +226,11 @@ if PLTs == 1
     xlabel('Distance [m]'), ylabel('Force [N]')
     figure, plot(tVec./24./3600, offsetVec)
     xlabel('Time [Days]'), ylabel('Sail Offset from Beam Axis [m]')
+    figure, plot(tVec./24./3600, tauVec)
+    xlabel('Time [Days]'), ylabel('Torque [Nm]')
+    figure, plot(tVec./24./3600, alphVec)
+    xlabel('Time [Days]'), ylabel('Angular Acceleration [rad/s^2]')
+    figure, plot(tVec./24./3600, angVec)
+    xlabel('Time [Days]'), ylabel('Angular Rate [rad/s]')
 end
+    
