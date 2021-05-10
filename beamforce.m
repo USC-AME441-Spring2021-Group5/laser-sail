@@ -1,4 +1,4 @@
-function [F,tau] = beamforce(R,P,LAMBDA,PROFILE,TOL,X,Y,D,DIVERGENCE,PLT,COM)
+function [F,tau] = beamforce(R,P,LAMBDA,PROFILE,TOL,X,Y,D,DIVERGENCE,PLT,COM,SR)
 %BEAMFORCE(R,P,PROFILE,X,Y) Calculates force on a spherical sail due to the
 %photon momentum from an incoming laser beam. R is the radius of the
 %spherical sail, P is the total power output of the laser, PROFILE is a
@@ -17,6 +17,12 @@ if DIVERGENCE == 1
     W = W0*(sqrt(1 + (LAMBDA*D/pi/(W0^2))^2));
 else
     W = R;
+end
+
+if SR == 1
+    sigh = 2e-6;
+    T = 1e-3;
+    siga = (1/sqrt(2))*atan(2*sigh/T);
 end
 
 switch PROFILE
@@ -76,6 +82,17 @@ for j = 1:length(Y)-1
     % Calling normal vector for the point of interest
     nHat = [(Y(j)-Y(j+1)) (X(j+1)-X(j))]/...
         norm([(Y(j)-Y(j+1)) (X(j+1)-X(j))]);
+    if SR == 1
+%         syms('a')
+%         assume(a,'real')
+%         random = randi(1,1);
+%         prob = T/(2*sigh*sqrt(pi)*(cos(a)^2))*...
+%             exp((T*(tan(a)^2/(2*sigh)))^2);
+%         alph = double(solve(prob==random,a))
+        alph = siga*randn;
+        Q = [cosd(alph) -sind(alph); sind(alph) cosd(alph)];
+        nHat = nHat*Q;
+    end
     nHatVec(1,j) = nHat(1); nHatVec(2,j) = nHat(2);
 
     % Calculating force due to the ray of interest
@@ -95,8 +112,8 @@ for j = 1:length(Y)-1
         poi = [(.5*(X(j)+X(j+1))) (.5*(Y(j)+Y(j+1)))];
         ray = [-1e3*R poi(1); poi(2) poi(2)];
         plot(ray(1,:), ray(2,:), 'r')
-%         quiver(poi(1), poi(2), nHat(1), nHat(2), .1, 'm')
-%         quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 1e6, 'b')
+        quiver(poi(1), poi(2), nHat(1), nHat(2), .1, 'm')
+        quiver(poi(1), poi(2), Fvec(1,j), Fvec(2,j), 1e6, 'b')
     end
     end
 %    fprintf('\nray %i:\n%.16f\t%.16f\n%.16f\t%.16f\n', j, nHat(1), nHat(2),...
