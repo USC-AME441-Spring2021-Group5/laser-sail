@@ -18,10 +18,10 @@ stmnt = 0;
 Drag = 0;
 PointingTol = 0;
 BeamDivergence = 0;
-% SurfaceRoughness = 0;
-% Define the offset in [x y]
-CenterOfMassOffset = [0 0];
+SurfaceRoughness = 0;
 SRP = 0;
+% Define the offset in [x y]
+CenterOfMassOffset = [-1e-3 -1e-3];
 
 %% Setting up inital paramters and known constants
 
@@ -33,7 +33,7 @@ omega = 0;              % Initial angular rate of sail
 theta = 0;              % Inital rotation due to torques
 P = 30;                 % Power of laser beam [W]
 lambda = 980e-9;        % Wavelength of laser
-N = 1e3;                % Number of rays --> KEEP EVEN
+N = 1e3;               % Number of rays --> KEEP EVEN
 if mod(N,2) ~= 0
     error('N must be even to create power distribution.')
 end
@@ -41,7 +41,7 @@ profile = 'multi-mode gaussian';    % Type of beam profile
 dt = 3600;                 % time differential for force calculation [s]
 tTotal = (16*24 + 10)*3600;      % total time to run the experiment
 rho = 5.12e-19;         % atmospheric density at GEO (35,786km altitude) [kg/m^3]
-phi = 0;              % initial incident angle of sun wrt to laser
+phi = 0;                % initial incident angle of sun wrt to laser
 q = 0.4;                % refelctance of sphere surface (1 is perfect reflection)
 if PointingTol == 1     % Pointing accuracy of laser sat (assumed)
     tol = .2*pi/180;    % Taken from ITU-R
@@ -103,21 +103,21 @@ So we have a seperate scripts that calculate different forces (drag and
 from the beam) that we can call here. That way we make sure things are
 kept seperate and can run by themselves first. Just so nothing gets too
 hairy.
-%}  
-    % calculate the angle of SRP incidence wrt the sail position and laser
+%} 
+
+  % calculate the angle of SRP incidence wrt the sail position and laser
     % vector
     T = 86164;      % GEO orbital period [s]
     rate = 360/T;   % degrees per second
     phi_prime = phi + rate*t; % new incident angle of sun wrt to laser
 
     [FBeam,tau] = beamforce(R,P,lambda,profile,tol,xVec,yVec,...
-        center(1), BeamDivergence, plt, COM);
+        center(1), BeamDivergence, plt, COM, SurfaceRoughness);
     if Drag == 1
         FDrag = dragforce(rho,norm(v),R);
     else
         FDrag = 0;
     end
-    
     if SRP == 1
         F_SRP = SRPforce(R,N,phi_prime,q);
     else
